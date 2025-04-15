@@ -7,14 +7,26 @@ from textblob import TextBlob
 
 THRESHOLD = 0.4 # Sayı azaldıkça cevap daha hassas alınır.
 
+
 class ChatBot:
-    def __init__(self, memory_file="memory.json", log_file="log.txt"):
-        self.memory_file = memory_file
-        self.log_file = log_file
+    def __init__(self, settings_path="./config/settings.json", emotion_path="./config/emotions.json"):
+        self.settings = self.load_json(settings_path)
+        self.emotions = self.load_json(emotion_path)
+
+        self.memory_file = os.path.join(".", self.settings.get("memory_file", "config/memory.json"))
+        self.log_file = os.path.join(".", self.settings.get("log_file", "data/log.txt"))
+        self.avatar_path = os.path.join(".", self.settings.get("avatar_path", "assets/avatars/"))
+        self.default_avatar = self.settings.get("default_avatar", "avatar.png")
+
         self.memory = self.load_memory()
+        self.user_name = self.memory.get("kullanıcı_adı", None)
         self.last_question = None
-        self.user_name = self.memory.get("kullanici_adi", None)
-        self.reactions = self.load_reactions()
+
+    def load_json(self, path):
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {}
 
     def load_memory(self):
         if os.path.exists(self.memory_file):
@@ -36,20 +48,25 @@ class ChatBot:
         name = self.user_name or ""
         response, avatar = None, None
 
-        # 1. Duygusal tepki
+        # 1. Duygu analizi (keyword + sentiment + config'ten avatar ve cevap)
         emotion = self.detect_emotion(user_input)
         if emotion:
             response, avatar = self.generate_emotional_response(emotion)
             if response:
                 return (response, avatar) if return_avatar else response
 
-        # 2. Özel komutlar
+        # 2. Sabit komutlar
         if user_input == "çık":
             response = "Görüşürüz."
+
         elif user_input == "ne öğrendin?":
-            response = "İşte öğrendiklerim:\n" + "\n".join(
-                f"• {q.capitalize()} → {a}" for q, a in self.memory.items()
-            ) if self.memory else "Henüz hiçbir şey öğrenmedim."
+            if not self.memory:
+                response = "Henüz hiçbir şey öğrenmedim."
+            else:
+                response = "İşte öğrendiklerim:\n" + "\n".join(
+                    f"• {q.capitalize()} → {a}" for q, a in self.memory.items()
+                )
+
         elif user_input.startswith("unut "):
             key = user_input.replace("unut ", "").strip()
             if key in self.memory:
@@ -58,24 +75,30 @@ class ChatBot:
                 response = f"'{key}' sorusunu hafızamdan sildim."
             else:
                 response = "Bunu zaten bilmiyordum."
+
         elif user_input == "hepsini sil":
             self.delete_memory()
             response = "Tüm bilgileri hafızamdan sildim."
+
         elif "benim adım" in user_input:
             name = user_input.split("benim adım")[-1].strip().capitalize()
             self.memory["kullanıcı_adı"] = name
             self.user_name = name
             self.save_memory()
             response = f"Merhaba {name}, seni hatırlayacağım!"
+
         elif "adımı biliyor musun" in user_input:
             response = f"Evet, adın {self.user_name}!" if self.user_name else "Henüz adını öğrenmedim. Söyler misin?"
+
         elif self.last_question:
             self.memory[self.last_question] = user_input
             self.save_memory()
             self.last_question = None
             response = "Teşekkürler! Artık bunu biliyorum."
+
         elif user_input in self.memory:
             response = self.memory[user_input].capitalize()
+
         else:
             similar_q, _ = self.find_similar_question(user_input)
             if similar_q:
@@ -84,7 +107,8 @@ class ChatBot:
                 self.last_question = user_input
                 response = "Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?"
 
-        return (response, avatar) if return_avatar else response
+        # 3. Dönüş
+        return (response, avatar or self.default_avatar) if return_avatar else response
 
     def save_log(self, chat_lines):
         if not chat_lines:
@@ -117,28 +141,21 @@ class ChatBot:
         return None, 0.0
 
     def detect_emotion(self, user_input):
-        # Anahtar kelimeye göre duygu
-        emotion_keywords = {
-            "mutlu": ["teşekkür", "harika", "çok güzel", "mükemmel", "seviyorum"],
-            "üzgün": ["üzgünüm", "canım sıkkın", "moralim bozuk", "yalnızım", "ağlıyorum"],
-            "sinirli": ["nefret", "sinirliyim", "bıktım", "deliriyorum"],
-            "övgü": ["aferin", "bravo", "çok iyisin", "helal"]
-        }
-
-        for emotion, keywords in emotion_keywords.items():
-            for word in keywords:
-                if word in user_input:
+        user_input = user_input.lower()  # 👈 çok önemli
+        print(f"[Gelen mesaj]: {user_input}")
+        for emotion, data in self.emotions.items():
+            for keyword in data.get("keywords", []):
+                if keyword in user_input:
+                    print(f"[Duygu eşleşti]: '{keyword}' → {emotion}")
                     return emotion
 
-        # TextBlob ile skor bazlı duygu
+        # Yedek: TextBlob analizi
         blob = TextBlob(user_input)
         polarity = blob.sentiment.polarity
-
         if polarity > 0.3:
             return "mutlu"
         elif polarity < -0.3:
             return "üzgün"
-
         return None
 
     def load_reactions(self, path="reactions.json"):
@@ -148,11 +165,16 @@ class ChatBot:
         return {}
 
     def generate_emotional_response(self, emotion):
-        if emotion in self.reactions:
+        if emotion in self.emotions:
             name = self.user_name or ""
-            raw_text = self.reactions[emotion]["response"]
+            raw_text = self.emotions[emotion].get("response", "")
             response = raw_text.replace("{name}, ", f"{name}, " if name else "")
-            avatar = self.reactions[emotion]["avatar"]
+            avatar = self.emotions[emotion].get("avatar", self.default_avatar)
             return response, avatar
-        return None, None
+        return None, self.default_avatar
 
+    def load_emotion_keywords(self, path="emotion_keywords.json"):
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {}

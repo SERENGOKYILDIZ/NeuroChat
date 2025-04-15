@@ -75,13 +75,12 @@ class ChatUI:
         if not user_input:
             return
 
+        #Senin konuşman
         self.talking("Sen", user_input)
 
-        # ✅ DÜZENLİ: İki değeri unpack et
+        #Botun konuşması
         bot_response, emotion_avatar = self.bot.handle_message(user_input, return_avatar=True)
-
         self.talking("Bot", bot_response)
-
         # ✅ Avatar değiştir (varsa)
         if emotion_avatar:
             self.update_avatar(emotion_avatar)
@@ -128,10 +127,11 @@ class ChatUI:
             )
 
     def update_avatar(self, filename):
-        image_path = os.path.join("assets", "avatars", filename)
-        avatar_image = Image.open(image_path).resize((150, 150))
-        self.avatar_photo = ImageTk.PhotoImage(avatar_image)
-        self.avatar_label.configure(image=self.avatar_photo)
+        image_path = os.path.join(".", "assets", "avatars", filename)
+        if os.path.exists(image_path):
+            avatar_image = Image.open(image_path).resize((150, 150))
+            self.avatar_photo = ImageTk.PhotoImage(avatar_image)
+            self.avatar_label.configure(image=self.avatar_photo)
 
     def exit_app(self):
         self.bot.save_log(self.chat_log)

@@ -1,0 +1,28 @@
+
+--- Yeni Oturum (2025-04-15 18:29:21) ---
+Bot: Merhaba Eren, ben kişisel asistanınız NeuroBot!
+Sen: Osman
+Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?
+Sen: Kardeşin
+Bot: Teşekkürler! Artık bunu biliyorum.
+Sen: Osman
+Bot: Kardeşin
+--- 3 mesajlık sohbet tamamlandı. ---
+
+--- Yeni Oturum (2025-04-15 18:29:44) ---
+Bot: Merhaba Eren, ben kişisel asistanınız NeuroBot!
+Sen: ece
+Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?
+Sen: sevgilin
+Bot: Teşekkürler! Artık bunu biliyorum.
+Sen: ece
+Bot: Sevgilin
+--- 3 mesajlık sohbet tamamlandı. ---
+
+--- Yeni Oturum (2025-04-15 18:54:31) ---
+Bot: Merhaba! Ben kişisel asistanınız NeuroBot. Size nasıl yardımcı olabilirim?
+Sen: osman
+Bot: Kardeşin
+Sen: ece
+Bot: Sevgilin
+--- 2 mesajlık sohbet tamamlandı. ---

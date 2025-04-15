@@ -1,21 +1,26 @@
 {
   "mutlu": {
+    "keywords": ["teşekkür", "harika", "çok güzel", "mükemmel", "seviyorum"],
     "response": "{name}, senin mutlu olman beni de çok sevindiriyor 😊",
     "avatar": "avatar.png"
   },
   "üzgün": {
+    "keywords": ["üzgünüm", "canım sıkkın", "moralim bozuk", "yalnızım", "ağlıyorum"],
     "response": "{name}, üzgün olduğunu hissediyorum... İstersen konuşabiliriz 💙",
     "avatar": "avatar_sad.png"
   },
   "sinirli": {
+    "keywords": ["nefret", "sinirliyim", "bıktım", "deliriyorum"],
     "response": "{name}, biraz sakinleşmeni öneririm... Her şey yoluna girecek 🫂",
     "avatar": "avatar_surprised.png"
   },
   "övgü": {
+    "keywords": ["aferin", "bravo", "çok iyisin", "helal"],
     "response": "{name}, çok naziksin! Teşekkür ederim ✨",
     "avatar": "avatar_happy.png"
   },
   "şaşkın": {
+    "keywords": ["ciddi misin", "nasıl yani", "şaka mı bu"],
     "response": "{name}, sanırım bu beni de şaşırttı 😳",
     "avatar": "avatar_surprised.png"
   }

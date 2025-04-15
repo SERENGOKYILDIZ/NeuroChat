@@ -1,0 +1,7 @@
+{
+  "memory_file": "./config/memory.json",
+  "log_file": "./data/log.txt",
+  "default_avatar": "avatar.png",
+  "avatar_path": "./assets/avatars/",
+  "DEBUG": "true"
+}
