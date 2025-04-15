@@ -65,6 +65,7 @@ class ChatUI:
 
     def exit_app(self):
         self.bot.save_log(self.chat_log)
+        print("Sohbet günlüğü kaydedildi.")  # veya tkinter ile popup ekleyebilirsin
         self.window.destroy()
 
     def run(self):

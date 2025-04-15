@@ -70,3 +70,7 @@ class ChatBot:
             f.write(f"\n--- Yeni Oturum ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')}) ---\n")
             for line in chat_lines:
                 f.write(line + "\n")
+            f.write(f"--- {len(chat_lines) // 2} mesajlık sohbet tamamlandı. ---\n")
+
+    def greeting(self):
+        return "Merhaba ben kişisel asistanınız NeuroBot. Size nasıl yardımcı olabilirim?"

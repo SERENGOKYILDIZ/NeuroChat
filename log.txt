@@ -13,3 +13,24 @@ Sen: selamlar
 Bot: Selamlar
 Sen: Sen kimsin
 Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?
+
+--- Yeni Oturum (2025-04-15 16:33:02) ---
+Bot: Merhaba ben kişisel asistanınız NeuroBot size nasıl yardımcı olabilirim?
+Sen: merhaba
+Bot: Merhaba tekrardan
+
+--- Yeni Oturum (2025-04-15 16:35:41) ---
+Bot: Merhaba ben kişisel asistanınız NeuroBot. Size nasıl yardımcı olabilirim?
+Sen: merhaba
+Bot: Merhaba tekrardan
+Sen: nasılsın
+Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?
+Sen: iyiyim sen nasılsın?
+Bot: Teşekkürler! Artık bunu biliyorum.
+Sen: nasılsın?
+Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?
+Sen: iyiyim sen nasılsın?
+Bot: Teşekkürler! Artık bunu biliyorum.
+Sen: nasılsın
+Bot: Iyiyim sen nasılsın?
+--- 6 mesajlık sohbet tamamlandı. ---
