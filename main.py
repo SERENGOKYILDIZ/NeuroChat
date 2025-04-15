@@ -1,9 +1,9 @@
 import json
 import os
 
-# --- Hafıza dosyası
 MEMORY_FILE = "memory.json"
 
+# --- Hafıza işlemleri
 def load_memory():
     if os.path.exists(MEMORY_FILE):
         with open(MEMORY_FILE, "r", encoding="utf-8") as f:
@@ -16,43 +16,32 @@ def save_memory(memory):
 
 def basic_bot():
     memory = load_memory()
-    print("Bot: Merhaba! Ben geliştirilebilir bir botum. (Çıkmak için 'çık' yaz)")
+    last_question = None  # Henüz cevabı alınmamış bir soru var mı?
+
+    print("Bot: Merhaba! Ben öğrenebilen bir botum. (Çıkmak için 'çık' yaz)")
 
     while True:
-        user_input = input("Sen: ").lower()
+        user_input = input("Sen: ").strip().lower()
 
         if user_input == "çık":
             print("Bot: Görüşürüz!")
             break
 
-        # Öğrenme: "Benim adım Ahmet." gibi
-        elif "benim adım" in user_input:
-            name = user_input.split("benim adım")[-1].strip().capitalize()
-            memory["kullanıcı_adı"] = name
+        # Öğrenme aşaması: bir önceki soru için cevap verildi mi?
+        if last_question:
+            memory[last_question] = user_input
             save_memory(memory)
-            print(f"Bot: Merhaba {name}, seni hatırlayacağım!")
+            print("Bot: Teşekkürler! Artık bunu biliyorum.")
+            last_question = None
+            continue
 
-        # Hatırlama: Adı hatırlat
-        elif "adımı biliyor musun" in user_input:
-            if "kullanıcı_adı" in memory:
-                print(f"Bot: Evet, adın {memory['kullanıcı_adı']}!")
-            else:
-                print("Bot: Henüz adını öğrenmedim. Söyler misin?")
+        # Eğer soru daha önce öğrenilmişse cevapla
+        if user_input in memory:
+            print(f"Bot: {memory[user_input]}")
+            continue
 
-        # Yeni konu örnekleri
-        elif "okul" in user_input:
-            print("Bot: Okul hayatı bazen zor olabiliyor ama öğrenmek güzeldir!")
-
-        elif "müzik" in user_input:
-            print("Bot: En sevdiğin müzik türü nedir?")
-
-        elif "oyun" in user_input:
-            print("Bot: Ben yapay zekayım ama oyunları çok severim!")
-
-        elif "yemek" in user_input:
-            print("Bot: Bugün ne yedin? Ben sadece veri yiyorum :)")
-
-        else:
-            print("Bot: Bu konuyu bilmiyorum, ama öğrenebilirim!")
+        # Bilinmeyen soruya geldiğimizde öğrenme tetiklenir
+        print("Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?")
+        last_question = user_input
 
 basic_bot()
