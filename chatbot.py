@@ -1,9 +1,11 @@
 import json
 import os
+from datetime import datetime
 
 class ChatBot:
-    def __init__(self, memory_file="memory.json"):
+    def __init__(self, memory_file="memory.json", log_file="log.txt"):
         self.memory_file = memory_file
+        self.log_file = log_file
         self.memory = self.load_memory()
         self.last_question = None
 
@@ -56,7 +58,15 @@ class ChatBot:
             return "Teşekkürler! Artık bunu biliyorum."
 
         if user_input in self.memory:
-            return self.memory[user_input]
+            return self.memory[user_input].capitalize()
 
         self.last_question = user_input
         return "Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?"
+
+    def save_log(self, chat_lines):
+        if not chat_lines:
+            return
+        with open(self.log_file, "a", encoding="utf-8") as f:
+            f.write(f"\n--- Yeni Oturum ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')}) ---\n")
+            for line in chat_lines:
+                f.write(line + "\n")

@@ -1,0 +1,15 @@
+
+--- Yeni Oturum (2025-04-15 13:17:00) ---
+Sen: selam
+Bot: selam sana
+
+--- Yeni Oturum (2025-04-15 13:26:41) ---
+Bot: Merhaba ben kişisel asistanınız NeuroBot size nasıl yardımcı olabilirim?
+Sen: Selamlar
+Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?
+Sen: Selamlar
+Bot: Teşekkürler! Artık bunu biliyorum.
+Sen: selamlar
+Bot: Selamlar
+Sen: Sen kimsin
+Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?
