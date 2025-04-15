@@ -8,6 +8,7 @@ class ChatBot:
         self.log_file = log_file
         self.memory = self.load_memory()
         self.last_question = None
+        self.user_name = self.memory.get("kullanici_adi", None)
 
     def load_memory(self):
         if os.path.exists(self.memory_file):
@@ -27,7 +28,20 @@ class ChatBot:
     def handle_message(self, user_input):
         user_input = user_input.strip().lower()
 
-        if user_input == "çık":
+        if "benim adım" in user_input:
+            name = user_input.split("benim adım")[-1].strip().capitalize()
+            self.memory["kullanici_adi"] = name
+            self.user_name = name
+            self.save_memory()
+            return f"Merhaba {name}, seni hatırlayacağım!"
+
+        elif "adımı biliyor musun" in user_input:
+            if self.user_name:
+                return f"Evet, adın {self.user_name}!"
+            else:
+                return "Henüz adını öğrenmedim. Söyler misin?"
+
+        elif user_input == "çık":
             return "Görüşürüz."
 
         elif user_input == "ne öğrendin?":
@@ -73,4 +87,7 @@ class ChatBot:
             f.write(f"--- {len(chat_lines) // 2} mesajlık sohbet tamamlandı. ---\n")
 
     def greeting(self):
-        return "Merhaba ben kişisel asistanınız NeuroBot. Size nasıl yardımcı olabilirim?"
+        if self.user_name:
+            return f"Merhaba {self.user_name}, ben kişisel asistanınız NeuroBot!"
+        return "Merhaba! Ben kişisel asistanınız NeuroBot. Size nasıl yardımcı olabilirim?"
+

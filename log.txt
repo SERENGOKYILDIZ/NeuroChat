@@ -34,3 +34,9 @@ Bot: Teşekkürler! Artık bunu biliyorum.
 Sen: nasılsın
 Bot: Iyiyim sen nasılsın?
 --- 6 mesajlık sohbet tamamlandı. ---
+
+--- Yeni Oturum (2025-04-15 16:39:53) ---
+Bot: Merhaba ben kişisel asistanınız NeuroBot. Size nasıl yardımcı olabilirim?
+Sen: selamlar
+Bot: Selamlar
+--- 1 mesajlık sohbet tamamlandı. ---
