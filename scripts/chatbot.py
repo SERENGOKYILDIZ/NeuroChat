@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from textblob import TextBlob
 
 THRESHOLD = 0.4 # Sayı azaldıkça cevap daha hassas alınır.
 
@@ -13,6 +14,7 @@ class ChatBot:
         self.memory = self.load_memory()
         self.last_question = None
         self.user_name = self.memory.get("kullanici_adi", None)
+        self.reactions = self.load_reactions()
 
     def load_memory(self):
         if os.path.exists(self.memory_file):
@@ -29,71 +31,60 @@ class ChatBot:
             os.remove(self.memory_file)
         self.memory = {}
 
-    def handle_message(self, user_input):
+    def handle_message(self, user_input, return_avatar=False):
         user_input = user_input.strip().lower()
+        name = self.user_name or ""
+        response, avatar = None, None
 
-        # 1. Çıkış
+        # 1. Duygusal tepki
+        emotion = self.detect_emotion(user_input)
+        if emotion:
+            response, avatar = self.generate_emotional_response(emotion)
+            if response:
+                return (response, avatar) if return_avatar else response
+
+        # 2. Özel komutlar
         if user_input == "çık":
-            return "Görüşürüz."
-
-        # 2. Öğrendiklerini listeleme
-        if user_input == "ne öğrendin?":
-            if not self.memory:
-                return "Henüz hiçbir şey öğrenmedim."
-            response = "İşte öğrendiklerim:\n"
-            for q, a in self.memory.items():
-                response += f"• {q.capitalize()} → {a}\n"
-            return response.strip()
-
-        # 3. Unut komutu
-        if user_input.startswith("unut "):
+            response = "Görüşürüz."
+        elif user_input == "ne öğrendin?":
+            response = "İşte öğrendiklerim:\n" + "\n".join(
+                f"• {q.capitalize()} → {a}" for q, a in self.memory.items()
+            ) if self.memory else "Henüz hiçbir şey öğrenmedim."
+        elif user_input.startswith("unut "):
             key = user_input.replace("unut ", "").strip()
             if key in self.memory:
                 del self.memory[key]
                 self.save_memory()
-                return f"'{key}' sorusunu hafızamdan sildim."
+                response = f"'{key}' sorusunu hafızamdan sildim."
             else:
-                return "Bunu zaten bilmiyordum."
-
-        # 4. Tüm hafızayı sil
-        if user_input == "hepsini sil":
+                response = "Bunu zaten bilmiyordum."
+        elif user_input == "hepsini sil":
             self.delete_memory()
-            return "Tüm bilgileri hafızamdan sildim."
-
-        # 5. Kullanıcının adını öğrenme
-        if "benim adım" in user_input:
+            response = "Tüm bilgileri hafızamdan sildim."
+        elif "benim adım" in user_input:
             name = user_input.split("benim adım")[-1].strip().capitalize()
             self.memory["kullanıcı_adı"] = name
             self.user_name = name
             self.save_memory()
-            return f"Merhaba {name}, seni hatırlayacağım!"
-
-        # 6. Adı hatırlama
-        if "adımı biliyor musun" in user_input:
-            if self.user_name:
-                return f"Evet, adın {self.user_name}!"
-            else:
-                return "Henüz adını öğrenmedim. Söyler misin?"
-
-        # 7. Cevap öğrenme durumu
-        if self.last_question:
+            response = f"Merhaba {name}, seni hatırlayacağım!"
+        elif "adımı biliyor musun" in user_input:
+            response = f"Evet, adın {self.user_name}!" if self.user_name else "Henüz adını öğrenmedim. Söyler misin?"
+        elif self.last_question:
             self.memory[self.last_question] = user_input
             self.save_memory()
             self.last_question = None
-            return "Teşekkürler! Artık bunu biliyorum."
+            response = "Teşekkürler! Artık bunu biliyorum."
+        elif user_input in self.memory:
+            response = self.memory[user_input].capitalize()
+        else:
+            similar_q, _ = self.find_similar_question(user_input)
+            if similar_q:
+                response = f"Bu soruyu bilmiyorum. Ama '{similar_q}' sorusuna şöyle cevap vermiştim:\n{self.memory[similar_q]}"
+            else:
+                self.last_question = user_input
+                response = "Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?"
 
-        # 8. Doğrudan eşleşme varsa
-        if user_input in self.memory:
-            return self.memory[user_input].capitalize()
-
-        # 9. TF-IDF benzerlik kontrolü
-        similar_q, score = self.find_similar_question(user_input)
-        if similar_q:
-            return f"Bu soruyu bilmiyorum. Ama '{similar_q}' sorusuna şöyle cevap vermiştim:\n{self.memory[similar_q]}"
-
-        # 10. Hiçbir eşleşme yoksa öğrenme başlat
-        self.last_question = user_input
-        return "Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?"
+        return (response, avatar) if return_avatar else response
 
     def save_log(self, chat_lines):
         if not chat_lines:
@@ -125,4 +116,43 @@ class ChatBot:
             return questions[index], max_score
         return None, 0.0
 
+    def detect_emotion(self, user_input):
+        # Anahtar kelimeye göre duygu
+        emotion_keywords = {
+            "mutlu": ["teşekkür", "harika", "çok güzel", "mükemmel", "seviyorum"],
+            "üzgün": ["üzgünüm", "canım sıkkın", "moralim bozuk", "yalnızım", "ağlıyorum"],
+            "sinirli": ["nefret", "sinirliyim", "bıktım", "deliriyorum"],
+            "övgü": ["aferin", "bravo", "çok iyisin", "helal"]
+        }
+
+        for emotion, keywords in emotion_keywords.items():
+            for word in keywords:
+                if word in user_input:
+                    return emotion
+
+        # TextBlob ile skor bazlı duygu
+        blob = TextBlob(user_input)
+        polarity = blob.sentiment.polarity
+
+        if polarity > 0.3:
+            return "mutlu"
+        elif polarity < -0.3:
+            return "üzgün"
+
+        return None
+
+    def load_reactions(self, path="reactions.json"):
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {}
+
+    def generate_emotional_response(self, emotion):
+        if emotion in self.reactions:
+            name = self.user_name or ""
+            raw_text = self.reactions[emotion]["response"]
+            response = raw_text.replace("{name}, ", f"{name}, " if name else "")
+            avatar = self.reactions[emotion]["avatar"]
+            return response, avatar
+        return None, None
 

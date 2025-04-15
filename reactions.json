@@ -1,0 +1,22 @@
+{
+  "mutlu": {
+    "response": "{name}, senin mutlu olman beni de çok sevindiriyor 😊",
+    "avatar": "avatar.png"
+  },
+  "üzgün": {
+    "response": "{name}, üzgün olduğunu hissediyorum... İstersen konuşabiliriz 💙",
+    "avatar": "avatar_sad.png"
+  },
+  "sinirli": {
+    "response": "{name}, biraz sakinleşmeni öneririm... Her şey yoluna girecek 🫂",
+    "avatar": "avatar_surprised.png"
+  },
+  "övgü": {
+    "response": "{name}, çok naziksin! Teşekkür ederim ✨",
+    "avatar": "avatar_happy.png"
+  },
+  "şaşkın": {
+    "response": "{name}, sanırım bu beni de şaşırttı 😳",
+    "avatar": "avatar_surprised.png"
+  }
+}

@@ -1,13 +1,15 @@
+import os
 import tkinter as tk
 from tkinter import scrolledtext
 import datetime
 from PIL import Image, ImageTk  # Pillow kullanılıyor
 
-RES_AVATAR = "./images/avatar.png"
+RES_AVATAR = "./assetes/avatars/"
 
 class ChatUI:
     def __init__(self, bot_instance):
-        self.theme = "light"  # başlangıç modu
+        # self.theme = "light"  # başlangıç modu
+        self.theme = "dark"  # başlangıç modu
         self.themes = {
             "light": {
                 "bg": "#ffffff",
@@ -27,20 +29,22 @@ class ChatUI:
         self.bot = bot_instance
         self.window = tk.Tk()
         self.window.title("Sohbet Botu")
-        self.window.geometry("520x640")
+        self.window.geometry("520x740")
 
         # 🧠 Mesaj günlüğü
         self.chat_log = []
 
         # 🖼️ Avatar resmi
-        self.avatar_image = Image.open(RES_AVATAR).resize((100, 100))
+        # 🖼️ Avatar
+        default_avatar = os.path.join("assets", "avatars", "avatar.png")
+        self.avatar_image = Image.open(default_avatar).resize((150, 150))
         self.avatar_photo = ImageTk.PhotoImage(self.avatar_image)
-        self.avatar_label = tk.Label(self.window, image=self.avatar_photo, bg=self.themes[self.theme]["bg"])
+        self.avatar_label = tk.Label(self.window, image=self.avatar_photo)
         self.avatar_label.pack(pady=(5, 0))
 
         # 🪟 Sohbet alanı
         self.chat_area = scrolledtext.ScrolledText(self.window, wrap=tk.WORD, font=("Courier New", 11))
-        self.chat_area.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        self.chat_area.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
         self.chat_area.config(state='disabled')
 
         # ✍️ Giriş kutusu
@@ -73,8 +77,14 @@ class ChatUI:
 
         self.talking("Sen", user_input)
 
-        bot_response = self.bot.handle_message(user_input)
+        # ✅ DÜZENLİ: İki değeri unpack et
+        bot_response, emotion_avatar = self.bot.handle_message(user_input, return_avatar=True)
+
         self.talking("Bot", bot_response)
+
+        # ✅ Avatar değiştir (varsa)
+        if emotion_avatar:
+            self.update_avatar(emotion_avatar)
 
         self.entry.delete(0, tk.END)
 
@@ -116,6 +126,12 @@ class ChatUI:
                 borderwidth=0,
                 relief="flat"
             )
+
+    def update_avatar(self, filename):
+        image_path = os.path.join("assets", "avatars", filename)
+        avatar_image = Image.open(image_path).resize((150, 150))
+        self.avatar_photo = ImageTk.PhotoImage(avatar_image)
+        self.avatar_label.configure(image=self.avatar_photo)
 
     def exit_app(self):
         self.bot.save_log(self.chat_log)

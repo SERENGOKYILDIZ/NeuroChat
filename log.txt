@@ -56,3 +56,10 @@ Bot: Merhaba Eren, ben kişisel asistanınız NeuroBot!
 Sen: python hakkında bilgi verir misin?
 Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?
 --- 1 mesajlık sohbet tamamlandı. ---
+
+--- Yeni Oturum (2025-04-15 18:04:06) ---
+Bot: Merhaba Eren, ben kişisel asistanınız NeuroBot!
+Sen: üzgünüm
+Bot: Eren, üzgün olduğunu hissediyorum... İstersen konuşabiliriz 💙
+Sen: sinirkiyim
+--- 2 mesajlık sohbet tamamlandı. ---
