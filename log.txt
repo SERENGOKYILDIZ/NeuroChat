@@ -40,3 +40,19 @@ Bot: Merhaba ben kişisel asistanınız NeuroBot. Size nasıl yardımcı olabili
 Sen: selamlar
 Bot: Selamlar
 --- 1 mesajlık sohbet tamamlandı. ---
+
+--- Yeni Oturum (2025-04-15 17:11:37) ---
+Bot: Merhaba Eren, ben kişisel asistanınız NeuroBot!
+Sen: python nedir?
+Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?
+Sen: Bir programlama dilidir.
+Bot: Teşekkürler! Artık bunu biliyorum.
+Sen: Sen: python hakkında bilgi verir misin?
+Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?
+--- 3 mesajlık sohbet tamamlandı. ---
+
+--- Yeni Oturum (2025-04-15 17:12:40) ---
+Bot: Merhaba Eren, ben kişisel asistanınız NeuroBot!
+Sen: python hakkında bilgi verir misin?
+Bot: Bu soruyu bilmiyorum. Cevabını öğretmek ister misin?
+--- 1 mesajlık sohbet tamamlandı. ---

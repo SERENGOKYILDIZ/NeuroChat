@@ -3,6 +3,8 @@ from tkinter import scrolledtext
 import datetime
 from PIL import Image, ImageTk  # Pillow kullanılıyor
 
+RES_AVATAR = "./images/avatar.png"
+
 class ChatUI:
     def __init__(self, bot_instance):
         self.theme = "light"  # başlangıç modu
@@ -31,7 +33,7 @@ class ChatUI:
         self.chat_log = []
 
         # 🖼️ Avatar resmi
-        self.avatar_image = Image.open("images/avatar.png").resize((100, 100))
+        self.avatar_image = Image.open(RES_AVATAR).resize((100, 100))
         self.avatar_photo = ImageTk.PhotoImage(self.avatar_image)
         self.avatar_label = tk.Label(self.window, image=self.avatar_photo, bg=self.themes[self.theme]["bg"])
         self.avatar_label.pack(pady=(5, 0))

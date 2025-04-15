@@ -1,4 +1,4 @@
-from chatbot import ChatBot
+from scripts.chatbot import ChatBot
 from ui import ChatUI
 
 def main():
